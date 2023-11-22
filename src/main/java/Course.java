@@ -26,8 +26,13 @@ public class Course implements Comparable<Course>{
     private static final String DEFAULT_SEARCH_QUERIES = "&_openSectionsOnly=on&instructor=&_facetoface=on&_blended=on&_online=on&courseStartCompare=&courseStartHour=&courseStartMin=&courseStartAM=&courseEndHour=&courseEndMin=&courseEndAM=&teachingCenter=ALL";
     private static final int COURSE_NAME_LENGTH = 7;  //length of Course IDs
     private static final Gson gson = new Gson();
-
     private static TreeSet<Department> allDepartments = new TreeSet<>();
+
+
+    private String course_id;
+    private String name;
+    private int credits;
+    private String description;
 
     static{
         KEYWORDS.put("EARNED", "EXAM"); //for prerequisite exams
@@ -60,8 +65,46 @@ public class Course implements Comparable<Course>{
         allDepartments = gson.fromJson(getResponse.body(), new TypeToken<TreeSet<Department>>(){}.getType());
     }
 
+    /**
+     * Public constructor for Course which processes the data in a raw course for later use
+     * @param raw RawCourse that will be processed
+     */
+    public Course(RawCourse raw){
+        course_id = raw.getCourse_id();
+        name = raw.getName();
+        credits = raw.getCredits();
+        description = raw.getDescription();
+
+    }
+
+    public String getCourse_id() {
+        return course_id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getCredits() {
+        return credits;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public String toString() {
+        return "Course{" +
+                "course_id='" + course_id + '\'' +
+                ", name='" + name + '\'' +
+                ", credits=" + credits +
+                ", description='" + description + '\'' +
+                '}';
+    }
+
     @Override
     public int compareTo(Course o) {
-        return 0;
+        return this.course_id.compareTo(o.course_id);
     }
 }
