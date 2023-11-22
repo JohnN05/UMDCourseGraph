@@ -7,8 +7,7 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.HashMap;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * Course class is used to represent every UMD course.
@@ -33,6 +32,9 @@ public class Course implements Comparable<Course>{
     private String name;
     private int credits;
     private String description;
+    private Set<Set<String>> gen_eds;
+    private Set<Set<String>> prereqs;
+    private Set<Set<String>> corereqs;
 
     static{
         KEYWORDS.put("EARNED", "EXAM"); //for prerequisite exams
@@ -75,6 +77,37 @@ public class Course implements Comparable<Course>{
         credits = raw.getCredits();
         description = raw.getDescription();
 
+        processGenEds(raw.getGen_ed());
+
+    }
+
+    /**
+     * Processes and interprets the List of Gen-Eds in a RawCourse.  Gen-Ed Sets larger than 1 means the
+     * course provides credits that a student can choose from.
+     * Course will store Gen-Ed credits as such.  Every set in gen_eds represents a single Gen-Ed credit
+     * that can be earned.  If there is more than a single String in a Set, the student may decide which
+     * Gen-Ed they would like to earn for the course.
+     *
+     * @param rawGenEds the original Set of GenEds acquired by the umd.io API
+     */
+    private void processGenEds(ArrayList<ArrayList<String>> rawGenEds){
+        gen_eds = new HashSet<>();
+        HashSet<String> genEdOptions = new HashSet<String>();
+
+        //Handles courses that can provide different gen eds
+        if(gen_eds.size() > 1){
+            genEdOptions.add(rawGenEds.remove(0).get(0));
+            genEdOptions.add(rawGenEds.get(0).remove(0));
+        }
+
+        if(!rawGenEds.isEmpty()){
+            for(String genEd: rawGenEds.get(0)){
+                HashSet<String> genEdSet = new HashSet<>();
+                genEdSet.add(genEd);
+
+                gen_eds.add(genEdSet);
+            }
+        }
     }
 
     public String getCourse_id() {
