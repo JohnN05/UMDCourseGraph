@@ -1,5 +1,8 @@
+package courses;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import courses.Course;
 
 import java.io.IOException;
 import java.net.URI;
@@ -7,27 +10,26 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Provides the client with a set of UMD's departments with umd.io API
+ * Provides the client with a list of all UMD courses
  *
  * @author JohnN05
  */
+public class CourseList {
+    private static final String COURSE_LIST_API = "https://api.umd.io/v1/courses/list";
+    private List<Course> courses;
 
-public class DepartmentList {
-    private static final String API_URL = "https://api.umd.io/v1/courses/departments";
-    private static Set<Department> allDepartments;
-
-    static{
+    public CourseList(){
         Gson gson = new Gson();
         HttpClient httpClient = HttpClient.newHttpClient();
         HttpRequest getRequest = null;
         HttpResponse<String> getResponse = null;
         try {
             getRequest = HttpRequest.newBuilder()
-                    .uri(new URI(API_URL))
+                    .uri(new URI(COURSE_LIST_API))
                     .build();
         } catch (URISyntaxException e) {
             e.printStackTrace();
@@ -41,10 +43,10 @@ public class DepartmentList {
             e.printStackTrace();
         }
 
-        allDepartments = gson.fromJson(getResponse.body(), new TypeToken<TreeSet<Department>>(){}.getType());
+        courses = gson.fromJson(getResponse.body(), new TypeToken<ArrayList<Course>>(){}.getType());
     }
 
-    public static Set<Department> getAllDepartments() {
-        return allDepartments;
+    public List<Course> getCourses() {
+        return courses;
     }
 }

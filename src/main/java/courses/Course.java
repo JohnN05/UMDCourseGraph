@@ -1,21 +1,19 @@
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+package courses;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import com.google.gson.Gson;
+import courses.relationship.CourseRelationship;
+import departments.Department;
+import departments.DepartmentList;
+
 import java.util.*;
 
 /**
- * Course class is used to represent every UMD course.
+ * courses.Course class is used to represent every UMD course.
  * Stores information on a course such as Prerequisites, Restrictions, etc.
  *
  * @author JohnN05
  */
-public class Course implements Comparable<Course>, CourseRelationship{
+public class Course implements Comparable<Course>, CourseRelationship {
 
     //Keywords used to interpret course requisites
     private static final String[] CONJUNCTIONS = {"OR", "AND"};
@@ -27,7 +25,7 @@ public class Course implements Comparable<Course>, CourseRelationship{
 
     private static final String[] RELATIONSHIPS = {"coreqs", "prereqs", "restrictions", "additional_info"};
     private static final String DEFAULT_SEARCH_QUERIES = "&_openSectionsOnly=on&instructor=&_facetoface=on&_blended=on&_online=on&courseStartCompare=&courseStartHour=&courseStartMin=&courseStartAM=&courseEndHour=&courseEndMin=&courseEndAM=&teachingCenter=ALL";
-    private static final int COURSE_ID_LENGTH = 7;  //length of Course IDs
+    private static final int COURSE_ID_LENGTH = 7;  //length of courses.Course IDs
     private static final Gson gson = new Gson();
 
     private String course_id;
@@ -41,7 +39,7 @@ public class Course implements Comparable<Course>, CourseRelationship{
 
 
     /**
-     * Constructor for Course.  Primarily used to locate a Course to process.
+     * Constructor for courses.Course.  Primarily used to locate a courses.Course to process.
      *
      * @param course_id course_id of this object
      */
@@ -50,9 +48,9 @@ public class Course implements Comparable<Course>, CourseRelationship{
     }
 
     /**
-     * Processes a RawCourse to obtain the remaining missing information
+     * Processes a courses.RawCourse to obtain the remaining missing information
      *
-     * @param raw RawCourse that will be converted into a Course
+     * @param raw courses.RawCourse that will be converted into a courses.Course
      */
     public void processCourse(RawCourse raw){
         credits = raw.getCredits();
@@ -63,13 +61,13 @@ public class Course implements Comparable<Course>, CourseRelationship{
     }
 
     /**
-     * Processes and interprets the List of Gen-Eds in a RawCourse.  Gen-Ed Sets larger than 1 means the
+     * Processes and interprets the List of Gen-Eds in a courses.RawCourse.  Gen-Ed Sets larger than 1 means the
      * course provides credits that a student can choose from.
-     * Course will store Gen-Ed credits as such.  Every set in gen_eds represents a single Gen-Ed credit
+     * courses.Course will store Gen-Ed credits as such.  Every set in gen_eds represents a single Gen-Ed credit
      * that can be earned.  If there is more than a single String in a Set, the student may decide which
      * Gen-Ed they would like to earn for the course.
      *
-     * @param raw the RawCourse containing the Gen Eds that will be processed
+     * @param raw the courses.RawCourse containing the Gen Eds that will be processed
      */
     private void processGenEds(RawCourse raw){
         ArrayList<ArrayList<String>> rawGenEds = raw.getGen_ed();
@@ -97,11 +95,11 @@ public class Course implements Comparable<Course>, CourseRelationship{
 
     /**
      * Processes and interprets the prerequisites stored in the relationships map.  Formats the prerequisites
-     * into a set of CourseRelationship sets.  Every set in prereqs represents an individual requirement the
-     * student must have prior to taking the class.  If there is more than a single CourseRelationship in a set,
+     * into a set of courses.relationship.CourseRelationship sets.  Every set in prereqs represents an individual requirement the
+     * student must have prior to taking the class.  If there is more than a single courses.relationship.CourseRelationship in a set,
      * Only one of the CourseRelationships listed are needed.
      *
-     * @param raw the RawCourse containing the prerequisites that will be processed
+     * @param raw the courses.RawCourse containing the prerequisites that will be processed
      */
     private void processPrereqs(RawCourse raw){
         prereqs = new HashSet<>();
@@ -233,7 +231,7 @@ public class Course implements Comparable<Course>, CourseRelationship{
 
     @Override
     public String toString() {
-        return "Course{" +
+        return "courses.Course{" +
                 "course_id='" + course_id + '\'' +
                 ", name='" + name + '\'' +
                 ", credits=" + credits +

@@ -1,3 +1,5 @@
+package courses;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -50,7 +52,7 @@ public class RawCourse {
 
     @Override
     public String toString() {
-        return "RawCourse{" +
+        return "courses.RawCourse{" +
                 "course_id='" + course_id + '\'' +
                 ", name='" + name + '\'' +
                 ", dept_id='" + dept_id + '\'' +
