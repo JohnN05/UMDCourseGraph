@@ -17,13 +17,17 @@ import java.util.*;
  */
 public class Course implements Comparable<Course>, CourseRelationship{
 
-    //Keywords used to help interpret course requisites
-    private static final HashMap<String, String> KEYWORDS = new HashMap<>();
-    private static final String[] SPECIAL_KEYWORDS = {"PERMISSION"};
+    //Keywords used to interpret course requisites
     private static final String[] CONJUNCTIONS = {"OR", "AND"};
+    private static final HashMap<String, String> KEYWORDS = new HashMap<>();
+    static{
+        KEYWORDS.put("EARNED", "EXAM"); //for prerequisite exams
+        KEYWORDS.put("HIGH","COURSE");  //for high school prerequisite
+    }
 
+    private static final String[] RELATIONSHIPS = {"coreqs", "prereqs", "restrictions", "additional_info"};
     private static final String DEFAULT_SEARCH_QUERIES = "&_openSectionsOnly=on&instructor=&_facetoface=on&_blended=on&_online=on&courseStartCompare=&courseStartHour=&courseStartMin=&courseStartAM=&courseEndHour=&courseEndMin=&courseEndAM=&teachingCenter=ALL";
-    private static final int COURSE_NAME_LENGTH = 7;  //length of Course IDs
+    private static final int COURSE_ID_LENGTH = 7;  //length of Course IDs
     private static final Gson gson = new Gson();
 
     private String course_id;
@@ -32,12 +36,9 @@ public class Course implements Comparable<Course>, CourseRelationship{
     private String description;
     private Set<Set<String>> gen_eds;
     private Set<Set<CourseRelationship>> prereqs;
-    private Set<Set<CourseRelationship>> corereqs;
+    private Set<Set<CourseRelationship>> coreqs;
 
-    static{
-        KEYWORDS.put("EARNED", "EXAM"); //for prerequisite exams
-        KEYWORDS.put("HIGH","COURSE");  //for high school prerequisite
-    }
+
 
     /**
      * Constructor for Course.  Primarily used to locate a Course to process.
@@ -103,7 +104,103 @@ public class Course implements Comparable<Course>, CourseRelationship{
      * @param raw the RawCourse containing the prerequisites that will be processed
      */
     private void processPrereqs(RawCourse raw){
+        prereqs = new HashSet<>();
+        Map<String, String> curRelations = raw.getRelationships();
+        String rawPrereqs = curRelations.get(RELATIONSHIPS[1]);
 
+        if(rawPrereqs == null){
+            return;
+        }
+
+        //Due to the formatting of umd.io's prereqs, prereqs listed with more than one sentence are put in additional_info
+        String morePrereqs = curRelations.get(RELATIONSHIPS[3]);
+        if(morePrereqs != null){
+            String firstWord = morePrereqs.substring(0, morePrereqs.indexOf(" ")).toUpperCase();
+
+            //Identifies displaced prerequisite info with the use of specific conjunctions
+            for(String s: CONJUNCTIONS){
+                if(s.matches(firstWord)){
+                    rawPrereqs += " " + morePrereqs.substring(0, morePrereqs.indexOf("."));
+                }
+            }
+        }
+
+        rawPrereqs = rawPrereqs.replaceAll("-", " ");
+        rawPrereqs = rawPrereqs.replaceAll("\\p{Punct}", "").toUpperCase();
+        LinkedList<String> rawPrereqWords = new LinkedList<>(Arrays.asList(rawPrereqs.split(" ")));
+        LinkedList<String> prereqWords= new LinkedList<>();
+        String curWord;
+
+        //recombines certain prerequisite words
+        while(!rawPrereqWords.isEmpty()){
+            boolean combinedWords = false;
+            curWord = rawPrereqWords.getFirst();
+            String merged = "";
+
+
+            //recombines words that mention department permission.  Example: "Permission of ENGR"
+            if(rawPrereqWords.getFirst().contains("PERMISSION")){
+
+                for(int word = 0; word < 2; word++){
+                    merged += rawPrereqWords.removeFirst() + " ";
+                }
+                prereqWords.add(merged.trim());
+            }
+
+            //recombines words in the list between a keyword and its value
+            if(!combinedWords) {
+                for (String key : KEYWORDS.keySet()) {
+                    int endPos = rawPrereqWords.indexOf(KEYWORDS.get(key));
+
+                    if (rawPrereqWords.contains(key) && endPos != -1) {
+                        combinedWords = true;
+
+                        for (int word = 0; word < endPos; word++) {
+                            merged += rawPrereqWords.removeFirst() + " ";
+                        }
+
+                        prereqWords.add(merged.trim());
+                        break;
+                    }
+                }
+            }
+        }
+
+        //Applies a whitelist on prereqWords
+        Iterator<String> iter = prereqWords.iterator();
+        while(iter.hasNext()){
+            boolean keepWord = false;
+            curWord = iter.next();
+
+            //Keeps department permission requisites
+            if(curWord.contains("PERMISSION")){
+                keepWord = true;
+
+            }if(!keepWord){
+
+                //Keeps conjunction words
+                for(String conjunction: CONJUNCTIONS){
+                    if(curWord.matches(conjunction)){
+                        keepWord = true;
+                        break;
+                    }
+                }
+
+            }if(!keepWord){
+
+                //Keeps words containing department ids such as course ids
+                for(Department d: DepartmentList.getAllDepartments()){
+                    String departmentID = d.getDept_id();
+                    if(curWord.length() == COURSE_ID_LENGTH && curWord.substring(0,4).equals(departmentID)){
+                        keepWord = true;
+                        break;
+                    }
+                }
+
+            }if(!keepWord){
+                iter.remove();
+            }
+        }
     }
 
     public String getCourse_id() {
@@ -130,8 +227,8 @@ public class Course implements Comparable<Course>, CourseRelationship{
         return prereqs;
     }
 
-    public Set<Set<CourseRelationship>> getCorereqs() {
-        return corereqs;
+    public Set<Set<CourseRelationship>> getCoreqs() {
+        return coreqs;
     }
 
     @Override
@@ -143,7 +240,7 @@ public class Course implements Comparable<Course>, CourseRelationship{
                 ", description='" + description + '\'' +
                 ", gen_eds=" + gen_eds +
                 ", prereqs=" + prereqs +
-                ", corereqs=" + corereqs +
+                ", corereqs=" + coreqs +
                 '}';
     }
 
