@@ -3,7 +3,7 @@
  *
  * @author JohnN05
  */
-public class Department implements Comparable<Department>{
+public class Department implements Comparable<Department>, CourseRelationship{
     private String dept_id;
     private String department;
 
