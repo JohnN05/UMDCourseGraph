@@ -1,16 +1,7 @@
 package courses;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import courses.Course;
+import utility.HttpReader;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,31 +10,11 @@ import java.util.List;
  * @author JohnN05
  */
 public class CourseList {
-    private static final String COURSE_LIST_API = "https://api.umd.io/v1/courses/list";
+
     private List<Course> courses;
 
     public CourseList(){
-        Gson gson = new Gson();
-        HttpClient httpClient = HttpClient.newHttpClient();
-        HttpRequest getRequest = null;
-        HttpResponse<String> getResponse = null;
-        try {
-            getRequest = HttpRequest.newBuilder()
-                    .uri(new URI(COURSE_LIST_API))
-                    .build();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            getResponse = httpClient.send(getRequest, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        courses = gson.fromJson(getResponse.body(), new TypeToken<ArrayList<Course>>(){}.getType());
+        courses = HttpReader.requestMinifiedCourses();
     }
 
     public List<Course> getCourses() {
