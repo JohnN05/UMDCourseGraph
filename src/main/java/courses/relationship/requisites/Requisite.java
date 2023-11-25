@@ -7,12 +7,14 @@ import java.util.Objects;
  *
  * @author JohnN05
  */
-public class Requisite {
+public abstract class Requisite {
     private final ReqType type;
 
     public Requisite(ReqType type){
         this.type = type;
     }
+
+    public abstract String getInfo();
 
     public ReqType getType() {
         return type;

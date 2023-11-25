@@ -6,14 +6,15 @@ package courses.relationship.requisites;
  * @author JohnN05
  */
 public class CourseReq extends Requisite{
-    private String course_id;
+    private final String course_id;
 
     public CourseReq(String course_id){
         super(ReqType.COURSE);
-        course_id = this.course_id;
+        this.course_id = course_id;
     }
 
-    public String getCourse_id() {
+    @Override
+    public String getInfo() {
         return course_id;
     }
 }

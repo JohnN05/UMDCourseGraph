@@ -14,7 +14,8 @@ public class DepartmentReq extends Requisite{
         this.department = department;
     }
 
-    public String getDepartment() {
+    @Override
+    public String getInfo() {
         return department;
     }
 }
