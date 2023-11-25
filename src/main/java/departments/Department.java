@@ -1,31 +1,27 @@
 package departments;
 
-import courses.relationship.CourseRelationship;
-
 /**
- * departments.Department class is used to represent all departments at UMD.
+ * Department class is used to represent a departments at UMD.
  *
  * @author JohnN05
  */
-public class Department implements Comparable<Department>, CourseRelationship {
-    private String dept_id;
-    private String department;
+public class Department implements Comparable<Department>{
+    private final String dept_id;
+    private final String department;
+
+    public Department(String dept_id, String department) {
+        this.dept_id = dept_id;
+        this.department = department;
+    }
 
     public String getDept_id() {
         return dept_id;
-    }
-
-    public void setDept_id(String dept_id) {
-        this.dept_id = dept_id;
     }
 
     public String getDepartment() {
         return department;
     }
 
-    public void setDepartment(String department) {
-        this.department = department;
-    }
 
     public String toString(){
         return dept_id + " - " + department;
