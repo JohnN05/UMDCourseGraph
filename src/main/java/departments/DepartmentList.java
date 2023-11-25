@@ -29,7 +29,7 @@ public class DepartmentList {
     public static Department matchDepartment(String text){
         for(Department department: DepartmentList.getAllDepartments()) {
             String departmentID = department.getDept_id();
-            if (text.matches(departmentID)) {
+            if (text.contains(departmentID)) {
                 return department;
             }
         }
