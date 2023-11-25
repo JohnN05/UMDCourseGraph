@@ -1,5 +1,7 @@
 package courses.relationship.requisites;
 
+import java.util.Objects;
+
 /**
  * Represents a requisite.
  *
@@ -16,4 +18,16 @@ public class Requisite {
         return type;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Requisite requisite = (Requisite) o;
+        return type == requisite.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type);
+    }
 }
