@@ -104,7 +104,7 @@ public class CourseFactory {
             //Identifies displaced prerequisite info with the use of specific conjunctions
             for (String s : CONJUNCTIONS) {
                 if (s.matches(firstWord)) {
-                    rawPrereqs.append(" ").append(morePrereqs.substring(0, morePrereqs.indexOf(".")));
+                    rawPrereqs.append(" ").append(morePrereqs, 0, morePrereqs.indexOf("."));
                 }
             }
         }
@@ -126,7 +126,7 @@ public class CourseFactory {
             if (curWord.contains("PERMISSION")) {
                 combinedWords = true;
 
-                for (int word = 0; word < 2; word++) {
+                for (int word = 0; word < 3; word++) {
                     merged.append(rawPrereqWords.removeFirst()).append(" ");
                 }
                 prereqWords.add(merged.toString().trim());
@@ -147,6 +147,9 @@ public class CourseFactory {
                         break;
                     }
                 }
+            }
+            if(!combinedWords){
+                prereqWords.add(rawPrereqWords.removeFirst());
             }
         }
         return prereqWords;
