@@ -7,7 +7,7 @@ import java.util.Objects;
  *
  * @author JohnN05
  */
-public abstract class Requisite {
+public abstract class Requisite{
     private final ReqType type;
 
     public Requisite(ReqType type){
@@ -25,11 +25,11 @@ public abstract class Requisite {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Requisite requisite = (Requisite) o;
-        return type == requisite.type;
+        return type == requisite.type && this.toString().equals(requisite.toString());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type);
+        return Objects.hash(type) * toString().hashCode();
     }
 }
