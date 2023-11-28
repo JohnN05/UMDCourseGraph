@@ -15,7 +15,7 @@ public class DepartmentReq extends Requisite{
     }
 
     @Override
-    public String getInfo() {
-        return department;
+    public String toString() {
+        return "Permission of " + department;
     }
 }

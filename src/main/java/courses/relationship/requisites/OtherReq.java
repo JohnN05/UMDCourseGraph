@@ -15,7 +15,7 @@ public class OtherReq extends Requisite{
     }
 
     @Override
-    public String getInfo() {
+    public String toString() {
         return text;
     }
 }

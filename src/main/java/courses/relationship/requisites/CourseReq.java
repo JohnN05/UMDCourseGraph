@@ -14,7 +14,7 @@ public class CourseReq extends Requisite{
     }
 
     @Override
-    public String getInfo() {
+    public String toString() {
         return course_id;
     }
 }

@@ -14,7 +14,7 @@ public abstract class Requisite {
         this.type = type;
     }
 
-    public abstract String getInfo();
+    public abstract String toString();
 
     public ReqType getType() {
         return type;

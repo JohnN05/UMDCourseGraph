@@ -26,7 +26,7 @@ public class CreditReq extends Requisite{
 
 
     @Override
-    public String getInfo() {
-        return department + "\t" + credits;
+    public String toString() {
+        return department + " requires " + credits + " credits";
     }
 }
