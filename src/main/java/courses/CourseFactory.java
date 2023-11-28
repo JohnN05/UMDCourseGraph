@@ -139,7 +139,7 @@ public class CourseFactory {
 
                     if (curWord.contains(key) && endPos != -1) {
 
-                        for (int word = 0; word < endPos; word++) {
+                        for (int word = 0; word <= endPos; word++) {
                             merged.append(rawPrereqWords.removeFirst()).append(" ");
                         }
 
@@ -168,8 +168,17 @@ public class CourseFactory {
             String curWord = iter.next();
 
             //Keeps department permission requisites
-            if(curWord.contains("PERMISSION")){
+            if(curWord.contains("PERMISSION")) {
                 keepWord = true;
+
+            //Keeps keywords
+            }if(!keepWord){
+                for(String keyWord: KEYWORDS.keySet()){
+                    if(curWord.contains(keyWord) && curWord.contains(KEYWORDS.get(keyWord))){
+                        keepWord = true;
+                        break;
+                    }
+                }
 
             //Keeps conjunctions
             }if(!keepWord){
@@ -184,7 +193,6 @@ public class CourseFactory {
             //Keeps courses
             }if(CourseList.isCourseID(curWord)){
                 keepWord = true;
-
 
             }if(!keepWord){
                 iter.remove();
@@ -211,6 +219,7 @@ public class CourseFactory {
      * before being added to the main Set.
      */
     private static HashSet<HashSet<Requisite>> interpretReqWords(List<String> reqWords){
+        System.out.println(reqWords);
         HashSet<HashSet<Requisite>> requisites = new HashSet<>();
         int conjunctionIndex = indexOfConjunction(reqWords);
 
@@ -233,6 +242,7 @@ public class CourseFactory {
                         }
                         reqWords.remove(0);
                         conjunctionIndex = indexOfConjunction(reqWords);
+
                     }while(conjunctionIndex > 0 && reqWords.get(conjunctionIndex).equals(CONJUNCTIONS[0]));
 
                     //adds the requisite after "OR" if it exists
@@ -259,6 +269,8 @@ public class CourseFactory {
                 singleReqCredit.add(RequisiteFactory.getRequisite(reqWords.remove(0)));
                 requisites.add(singleReqCredit);
             }
+
+            conjunctionIndex = indexOfConjunction(reqWords);
         }
         return requisites;
     }
