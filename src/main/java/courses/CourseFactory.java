@@ -98,7 +98,7 @@ public class CourseFactory {
         String morePrereqs = relationships.get(RELATIONSHIP_KEYS[3]);
 
         //Prerequisite descriptions longer than one sentence are moved into additional information
-        if (morePrereqs != null) {
+        if (morePrereqs != null && morePrereqs.contains(" ")) {
             String firstWord = morePrereqs.substring(0, morePrereqs.indexOf(" ")).toUpperCase();
 
             //Identifies displaced prerequisite info with the use of specific conjunctions
@@ -219,7 +219,6 @@ public class CourseFactory {
      * before being added to the main Set.
      */
     private static HashSet<HashSet<Requisite>> interpretReqWords(List<String> reqWords){
-        System.out.println(reqWords);
         HashSet<HashSet<Requisite>> requisites = new HashSet<>();
         int conjunctionIndex = indexOfConjunction(reqWords);
 
