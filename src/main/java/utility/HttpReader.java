@@ -2,7 +2,6 @@ package utility;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import courses.Course;
 import courses.RawCourse;
 import departments.Department;
 
@@ -26,7 +25,8 @@ import java.util.TreeSet;
 public class HttpReader {
     private static final String DEPARTMENT_URL = "https://api.umd.io/v1/courses/departments";
     private static final String COURSE_LIST_API = "https://api.umd.io/v1/courses/list";
-    private static final String COURSE_API = "https://api.umd.io/v1/courses?per_page=100";
+    private static final String COURSE_API = "https://api.umd.io/v1/courses";
+    public static final int PER_PAGE = 100;
 
     private static final Gson gson = new Gson();
 
@@ -37,13 +37,14 @@ public class HttpReader {
      * @return the list of RawCourses
      */
     public static List<RawCourse> requestRawCourse(String course_id){
-        String url = COURSE_API + course_id;
+        String url = COURSE_API+ "/" + course_id;
         return gson.fromJson(getRequest(url).body(), new TypeToken<ArrayList<RawCourse>>(){}.getType());
     }
 
     public static List<RawCourse> requestRawCoursePage(int pageNum){
-        String additionalQueries = "&page=" + pageNum;
-        return gson.fromJson(getRequest(COURSE_API + additionalQueries).body(), new TypeToken<ArrayList<RawCourse>>(){}.getType());
+        String additionalQueries =  "?per_page=" + PER_PAGE + "&page=" + pageNum;
+        String url = COURSE_API + additionalQueries;
+        return gson.fromJson(getRequest(url).body(), new TypeToken<ArrayList<RawCourse>>(){}.getType());
     }
 
     /**
