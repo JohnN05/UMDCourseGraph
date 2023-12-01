@@ -26,7 +26,7 @@ import java.util.TreeSet;
 public class HttpReader {
     private static final String DEPARTMENT_URL = "https://api.umd.io/v1/courses/departments";
     private static final String COURSE_LIST_API = "https://api.umd.io/v1/courses/list";
-    private static final String COURSE_API = "https://api.umd.io/v1/courses/";
+    private static final String COURSE_API = "https://api.umd.io/v1/courses?per_page=100";
 
     private static final Gson gson = new Gson();
 
@@ -41,13 +41,18 @@ public class HttpReader {
         return gson.fromJson(getRequest(url).body(), new TypeToken<ArrayList<RawCourse>>(){}.getType());
     }
 
+    public static List<RawCourse> requestRawCoursePage(int pageNum){
+        String additionalQueries = "&page=" + pageNum;
+        return gson.fromJson(getRequest(COURSE_API + additionalQueries).body(), new TypeToken<ArrayList<RawCourse>>(){}.getType());
+    }
+
     /**
      * Requests a list of minified Courses from umd.io
      *
      * @return the list of Courses
      */
-    public static List<Course> requestMinifiedCourses(){
-        return gson.fromJson(getRequest(COURSE_LIST_API).body(), new TypeToken<ArrayList<Course>>(){}.getType());
+    public static List<RawCourse> requestMinifiedCourses(){
+        return gson.fromJson(getRequest(COURSE_LIST_API).body(), new TypeToken<ArrayList<RawCourse>>(){}.getType());
     }
 
     /**
