@@ -38,13 +38,13 @@ public class HttpReader {
      */
     public static List<RawCourse> requestRawCourse(String course_id){
         String url = COURSE_API+ "/" + course_id;
-        return gson.fromJson(getRequest(url).body(), new TypeToken<ArrayList<RawCourse>>(){}.getType());
+        return gson.fromJson(getRequest(url), new TypeToken<ArrayList<RawCourse>>(){}.getType());
     }
 
     public static List<RawCourse> requestRawCoursePage(int pageNum){
         String additionalQueries =  "?per_page=" + PER_PAGE + "&page=" + pageNum;
         String url = COURSE_API + additionalQueries;
-        return gson.fromJson(getRequest(url).body(), new TypeToken<ArrayList<RawCourse>>(){}.getType());
+        return gson.fromJson(getRequest(url), new TypeToken<ArrayList<RawCourse>>(){}.getType());
     }
 
     /**
@@ -53,7 +53,7 @@ public class HttpReader {
      * @return the list of Courses
      */
     public static List<RawCourse> requestMinifiedCourses(){
-        return gson.fromJson(getRequest(COURSE_LIST_API).body(), new TypeToken<ArrayList<RawCourse>>(){}.getType());
+        return gson.fromJson(getRequest(COURSE_LIST_API), new TypeToken<ArrayList<RawCourse>>(){}.getType());
     }
 
     /**
@@ -62,7 +62,7 @@ public class HttpReader {
      * @return the complete department set
      */
     public static Set<Department> requestDepartmentSet(){
-        return gson.fromJson(getRequest(DEPARTMENT_URL).body(), new TypeToken<TreeSet<Department>>(){}.getType());
+        return gson.fromJson(getRequest(DEPARTMENT_URL), new TypeToken<TreeSet<Department>>(){}.getType());
     }
 
 
@@ -72,7 +72,7 @@ public class HttpReader {
      * @param url the API where the request is being sent
      * @return the response to the get request
      */
-    private static HttpResponse<String> getRequest(String url){
+    private static String getRequest(String url){
 
         HttpClient httpClient = HttpClient.newHttpClient();
         HttpRequest getRequest = null;
@@ -93,6 +93,8 @@ public class HttpReader {
             e.printStackTrace();
         }
 
-        return getResponse;
+        //removes parenthesis that may cause escape sequence errors
+        assert getResponse != null;
+        return getResponse.body().replace("(","").replace(")","");
     }
 }
