@@ -3,6 +3,7 @@ package courses;
 import departments.DepartmentList;
 import utility.HttpReader;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,11 +13,20 @@ import java.util.List;
  */
 public class CourseList {
     private static final int COURSE_ID_LENGTH = 7;
-
-    private List<Course> courses;
+    private final List<Course> courses;
 
     public CourseList(){
-        courses = HttpReader.requestMinifiedCourses();
+        courses = new ArrayList<>();
+        int pageCount = 1;
+        List<RawCourse> pageOfCourses = HttpReader.requestRawCoursePage(pageCount);
+        while(pageOfCourses.size() == HttpReader.PER_PAGE){
+            for(RawCourse r: pageOfCourses){
+                System.out.println("Processing: " + r.getCourse_id());
+                courses.add(CourseFactory.processCourse(r));
+            }
+
+            pageOfCourses = HttpReader.requestRawCoursePage(++pageCount);
+        }
     }
 
     public List<Course> getCourses() {
