@@ -2,6 +2,7 @@ package courses;
 
 import courses.relationship.requisites.Requisite;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,7 +12,7 @@ import java.util.Set;
  *
  * @author JohnN05
  */
-public class Course implements Comparable<Course> {
+public class Course implements Comparable<Course>, Serializable {
     private final String course_id;
     private final String name;
     private final int credits;

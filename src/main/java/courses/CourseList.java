@@ -3,6 +3,7 @@ package courses;
 import departments.DepartmentList;
 import utility.HttpReader;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +12,7 @@ import java.util.List;
  *
  * @author JohnN05
  */
-public class CourseList {
+public class CourseList implements Serializable {
     private static final int COURSE_ID_LENGTH = 7;
     private final List<Course> courses;
 
@@ -21,7 +22,6 @@ public class CourseList {
         List<RawCourse> pageOfCourses = HttpReader.requestRawCoursePage(pageCount);
         while(pageOfCourses.size() == HttpReader.PER_PAGE){
             for(RawCourse r: pageOfCourses){
-                System.out.println("Processing: " + r.getCourse_id());
                 courses.add(CourseFactory.processCourse(r));
             }
 
