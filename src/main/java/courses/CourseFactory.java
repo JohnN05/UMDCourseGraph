@@ -127,7 +127,11 @@ public class CourseFactory {
                 combinedWords = true;
 
                 for (int word = 0; word < 3; word++) {
-                    merged.append(rawPrereqWords.removeFirst()).append(" ");
+                    if(!rawPrereqWords.isEmpty()) {
+                        merged.append(rawPrereqWords.removeFirst()).append(" ");
+                    }else{
+                        word = 3;
+                    }
                 }
                 prereqWords.add(merged.toString().trim());
             }
@@ -148,7 +152,8 @@ public class CourseFactory {
                     }
                 }
             }
-            if(!combinedWords){
+
+            if(!combinedWords && !rawPrereqWords.isEmpty()){
                 prereqWords.add(rawPrereqWords.removeFirst());
             }
         }
