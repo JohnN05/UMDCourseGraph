@@ -24,7 +24,8 @@ public class CourseFactory {
         String description = course.getDescription();
         Set<Set<String>> gen_eds = processGenEds(course);
         HashSet<HashSet<Requisite>> prereqs = processPrereqs(course);
-        return new Course(name, course_id, credits, description, gen_eds, prereqs, null);
+        HashSet<HashSet<Requisite>> coreqs = processCoreqs(course);
+        return new Course(name, course_id, credits, description, gen_eds, prereqs, coreqs);
 
     }
 
@@ -64,6 +65,26 @@ public class CourseFactory {
     }
 
     /**
+     * Processes and interprets the Corerequisites stored in the relationships map.
+     *
+     * @param course rawCourse containing the corerequisites that will be processed
+     * @return formatted set of Requisites
+     */
+    private static HashSet<HashSet<Requisite>> processCoreqs(RawCourse course){
+        HashSet<HashSet<Requisite>> coreqs = new HashSet<>();
+        Map<String, String> curRelations = course.getRelationships();
+
+        if (curRelations.containsKey(RELATIONSHIP_KEYS[0]) && curRelations.get(RELATIONSHIP_KEYS[0]) != null) {
+            StringBuilder rawCoreqs = new StringBuilder(curRelations.get(RELATIONSHIP_KEYS[0]));
+            List<String> corereqWords = getReqWords(rawCoreqs);
+            filterReqWords(corereqWords);
+            coreqs = interpretReqWords(corereqWords);
+        }
+
+        return coreqs;
+    }
+
+    /**
      * Processes and interprets the prerequisites stored in the relationships map.  Formats the prerequisites
      * into a set of Requisite sets.
      *
@@ -73,31 +94,31 @@ public class CourseFactory {
      * Requisite sets with size greater than 1 means that the prerequisite can be fulfilled through different ways.
      */
     private static HashSet<HashSet<Requisite>> processPrereqs(RawCourse course) {
-        HashSet<HashSet<Requisite>> prereqs = new HashSet<>();
+        HashSet<HashSet<Requisite>> prereqs;
         Map<String, String> curRelations = course.getRelationships();
 
-        if (!curRelations.containsKey(RELATIONSHIP_KEYS[1]) || curRelations.get(RELATIONSHIP_KEYS[1]) == null) {
-            return prereqs;
-        }
-
-        List<String> prereqWords = getPrereqWords(curRelations);
+        StringBuilder rawPrereqs = getRawPrereqs(curRelations);
+        List<String> prereqWords = getReqWords(rawPrereqs);
         filterReqWords(prereqWords);
         prereqs = interpretReqWords(prereqWords);
+
         return prereqs;
     }
 
     /**
-     * Converts the prerequisite sentence provided by the API into separate words.
-     *
-     * @param relationships the Map of relationship Strings containing the prerequisites
-     * @return a List of Strings which represents the words in the prerequisite description.
-     * Certain words are recombined if they contain KEYWORDS for future filtering
+     * Creates a StringBuilder representing a Course's prerequisites
+     * @param relationships Map containing the prerequisite data
+     * @return Stringbuilder with corresponding prerequisite data
      */
-    private static List<String> getPrereqWords(Map<String, String> relationships){
-        StringBuilder rawPrereqs = new StringBuilder(relationships.get(RELATIONSHIP_KEYS[1]));
+    private static StringBuilder getRawPrereqs(Map<String, String> relationships){
+        StringBuilder rawPrereqs = new StringBuilder();
+
+        if(relationships.containsKey(RELATIONSHIP_KEYS[1]) && relationships.get(RELATIONSHIP_KEYS[1]) != null){
+            rawPrereqs.append(relationships.get(RELATIONSHIP_KEYS[1]));
+        }
         String morePrereqs = relationships.get(RELATIONSHIP_KEYS[3]);
 
-        //Prerequisite descriptions longer than one sentence are moved into additional information
+        //Addresses the API moving prereq descriptions longer than one sentence to "Additional Information:"
         if (morePrereqs != null && morePrereqs.contains(" ")) {
             String firstWord = morePrereqs.substring(0, morePrereqs.indexOf(" ")).toUpperCase();
 
@@ -109,16 +130,28 @@ public class CourseFactory {
             }
         }
 
+        return rawPrereqs;
+    }
+
+    /**
+     * Converts the requisite sentence provided by the API into separate words.
+     *
+     * @param rawReqs the Map of relationship Strings containing the prerequisites
+     * @return a List of Strings which represents the words in the prerequisite description.
+     * Certain words are recombined if they contain KEYWORDS for future filtering
+     */
+    private static List<String> getReqWords(StringBuilder rawReqs){
+
         //separates department abbreviations from names for simple processing and removes punctuation
-        rawPrereqs = new StringBuilder(rawPrereqs.toString().replaceAll("-", " "));
-        rawPrereqs = new StringBuilder(rawPrereqs.toString().replaceAll("\\p{Punct}", "").toUpperCase());
-        LinkedList<String> rawPrereqWords = new LinkedList<>(Arrays.asList(rawPrereqs.toString().split(" ")));
-        LinkedList<String> prereqWords = new LinkedList<>();
+        rawReqs = new StringBuilder(rawReqs.toString().replaceAll("-", " "));
+        rawReqs = new StringBuilder(rawReqs.toString().replaceAll("\\p{Punct}", "").toUpperCase());
+        LinkedList<String> rawReqWords = new LinkedList<>(Arrays.asList(rawReqs.toString().split(" ")));
+        LinkedList<String> reqWords = new LinkedList<>();
 
         //recombines certain prerequisite words
-        while (!rawPrereqWords.isEmpty()) {
+        while (!rawReqWords.isEmpty()) {
             boolean combinedWords = false;
-            String curWord = rawPrereqWords.getFirst();
+            String curWord = rawReqWords.getFirst();
             StringBuilder merged = new StringBuilder();
 
 
@@ -127,37 +160,37 @@ public class CourseFactory {
                 combinedWords = true;
 
                 for (int word = 0; word < 3; word++) {
-                    if(!rawPrereqWords.isEmpty()) {
-                        merged.append(rawPrereqWords.removeFirst()).append(" ");
+                    if(!rawReqWords.isEmpty()) {
+                        merged.append(rawReqWords.removeFirst()).append(" ");
                     }else{
                         word = 3;
                     }
                 }
-                prereqWords.add(merged.toString().trim());
+                reqWords.add(merged.toString().trim());
             }
 
             //recombines words in the list between a keyword and its value
             if (!combinedWords) {
                 for (String key : KEYWORDS.keySet()) {
-                    int endPos = rawPrereqWords.indexOf(KEYWORDS.get(key));
+                    int endPos = rawReqWords.indexOf(KEYWORDS.get(key));
 
                     if (curWord.contains(key) && endPos != -1) {
 
                         for (int word = 0; word <= endPos; word++) {
-                            merged.append(rawPrereqWords.removeFirst()).append(" ");
+                            merged.append(rawReqWords.removeFirst()).append(" ");
                         }
 
-                        prereqWords.add(merged.toString().trim());
+                        reqWords.add(merged.toString().trim());
                         break;
                     }
                 }
             }
 
-            if(!combinedWords && !rawPrereqWords.isEmpty()){
-                prereqWords.add(rawPrereqWords.removeFirst());
+            if(!combinedWords && !rawReqWords.isEmpty()){
+                reqWords.add(rawReqWords.removeFirst());
             }
         }
-        return prereqWords;
+        return reqWords;
     }
 
     /**
