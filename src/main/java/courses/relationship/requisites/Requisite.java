@@ -1,5 +1,6 @@
 package courses.relationship.requisites;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -7,7 +8,7 @@ import java.util.Objects;
  *
  * @author JohnN05
  */
-public abstract class Requisite{
+public abstract class Requisite implements Serializable {
     private final ReqType type;
 
     public Requisite(ReqType type){
