@@ -25,7 +25,7 @@ public class CourseFactory {
         Set<Set<String>> gen_eds = processGenEds(course);
         HashSet<HashSet<Requisite>> prereqs = processPrereqs(course);
         HashSet<HashSet<Requisite>> coreqs = processCoreqs(course);
-        return new Course(name, course_id, credits, description, gen_eds, prereqs, coreqs);
+        return new Course(course_id, name, credits, description, gen_eds, prereqs, coreqs);
 
     }
 
