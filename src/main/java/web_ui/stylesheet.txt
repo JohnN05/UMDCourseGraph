@@ -1,0 +1,13 @@
+/*
+Stylesheet used in CourseWeb
+*/
+
+graph{fill-color: #FDF0D5;}
+node{
+    text-alignment: above;
+    size: 5px;
+    text-size: 15px;
+}
+edge{
+    fill-color: #669BBC;
+    }
