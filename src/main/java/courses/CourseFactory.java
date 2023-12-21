@@ -5,6 +5,12 @@ import courses.relationship.requisites.RequisiteFactory;
 
 import java.util.*;
 
+/**
+ * Factory class for Course.  Used in CourseList.
+ *
+ * @author JohnN05
+ */
+
 public class CourseFactory {
     //Keywords used to interpret course requisites
     private static final String[] CONJUNCTIONS = {"OR", "AND"};
@@ -17,6 +23,12 @@ public class CourseFactory {
     private static final String[] RELATIONSHIP_KEYS = {"coreqs", "prereqs", "restrictions", "additional_info"};
 
 
+    /**
+     * Processes a RawCourse into a Course with usable information
+     *
+     * @param course RawCourse being processed
+     * @return Course with formatted information including requisites
+     */
     public static Course processCourse(RawCourse course){
         String name = course.getName();
         String course_id = course.getCourse_id();
