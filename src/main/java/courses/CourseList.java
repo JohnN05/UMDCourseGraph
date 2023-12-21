@@ -29,6 +29,20 @@ public class CourseList implements Serializable {
         }
     }
 
+    /**
+     * Alternative CourseList constructor
+     *
+     * @param keepVariants Decides whether course variants should be kept in the CourseList (COMM107 & COMM107C)
+     */
+    public CourseList(boolean keepVariants){
+        this();
+
+        if(!keepVariants){
+
+            courses.removeIf(course -> course.getCourse_id().length() > 7);
+        }
+    }
+
     public List<Course> getCourses() {
         return courses;
     }
