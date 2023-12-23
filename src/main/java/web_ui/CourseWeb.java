@@ -19,7 +19,7 @@ import java.util.HashSet;
  */
 
 public class CourseWeb {
-    private static final String stylesheet = "url('file:src/main/java/web_ui/stylesheet.txt')";
+    private static final String stylesheet = "url('file:src/main/java/web_ui/stylesheet.css')";
 
     //important configuration for GraphStream
     static{
