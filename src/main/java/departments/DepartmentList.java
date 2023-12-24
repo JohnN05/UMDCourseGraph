@@ -2,7 +2,7 @@ package departments;
 
 import utility.HttpReader;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * Provides the client with a set of UMD's departments with umd.io API
@@ -11,13 +11,13 @@ import java.util.Set;
  */
 
 public class DepartmentList {
-    private static final Set<Department> allDepartments;
+    private static final List<Department> allDepartments;
 
     static{
         allDepartments = HttpReader.requestDepartmentSet();
     }
 
-    public static Set<Department> getAllDepartments() {
+    public static List<Department> getAllDepartments() {
         return allDepartments;
     }
 

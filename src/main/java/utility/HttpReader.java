@@ -13,8 +13,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Utility class which handles the API requests.
@@ -61,8 +59,8 @@ public class HttpReader {
      *
      * @return the complete department set
      */
-    public static Set<Department> requestDepartmentSet(){
-        return gson.fromJson(getRequest(DEPARTMENT_URL), new TypeToken<TreeSet<Department>>(){}.getType());
+    public static List<Department> requestDepartmentSet(){
+        return gson.fromJson(getRequest(DEPARTMENT_URL), new TypeToken<ArrayList<Department>>(){}.getType());
     }
 
 
