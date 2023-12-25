@@ -7,6 +7,8 @@ import java.io.*;
 
 /**
  * Utility class which allows the client to load CourseList
+ *
+ * @author JohnN05
  */
 
 public class CourseListLoader {
