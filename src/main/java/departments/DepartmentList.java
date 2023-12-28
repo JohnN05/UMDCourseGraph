@@ -15,7 +15,7 @@ import static utility.ObjectLoader.load;
 
 public class DepartmentList {
     private static final List<Department> allDepartments;
-    private static final String OFFLINE_LIST_PATH = "offline/department_list";
+    private static final String OFFLINE_LIST_PATH = "offline_department_list";
 
     static{
         List<Department> list;
