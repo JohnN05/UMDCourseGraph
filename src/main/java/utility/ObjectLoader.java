@@ -1,7 +1,5 @@
 package utility;
 
-import courses.CourseList;
-
 import java.io.*;
 
 
@@ -11,20 +9,20 @@ import java.io.*;
  * @author JohnN05
  */
 
-public class CourseListLoader {
+public class ObjectLoader {
 
     /**
-     * Allows the client to save CourseList to a specific file path
-     * @param list CourseList being saved
-     * @param filePath location where CourseList is saved
+     * Allows the client to save Objects to a specific file path
+     * @param o Object being saved
+     * @param filePath location where Object is saved
      */
-    public static void saveList(CourseList list, String filePath){
+    public static void save(Object o, String filePath){
         ObjectOutputStream oOut;
         FileOutputStream fOut;
         try {
             fOut = new FileOutputStream(filePath);
             oOut = new ObjectOutputStream(fOut);
-            oOut.writeObject(list);
+            oOut.writeObject(o);
 
             oOut.close();
 
@@ -34,17 +32,17 @@ public class CourseListLoader {
     }
 
     /**
-     * Allows the client to load CourseList from a specific file path
-     * @param filePath located where CourseList is being loaded
-     * @return the CourseList located at the filePath
+     * Allows the client to load Objects from a specific file path
+     * @param filePath located where Object is being loaded
+     * @return the Object located at the filePath
      */
-    public static CourseList loadList(String filePath){
+    public static Object load(String filePath){
         ObjectInputStream objectStream;
         try{
             FileInputStream fIn = new FileInputStream(filePath);
             objectStream = new ObjectInputStream(fIn);
 
-            return (CourseList)objectStream.readObject();
+            return objectStream.readObject();
 
         } catch (Exception e) {
             e.printStackTrace();
