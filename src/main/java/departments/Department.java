@@ -1,11 +1,13 @@
 package departments;
 
+import java.io.Serializable;
+
 /**
  * Department class is used to represent a departments at UMD.
  *
  * @author JohnN05
  */
-public class Department implements Comparable<Department>{
+public class Department implements Comparable<Department>, Serializable {
     private final String dept_id;
     private final String department;
 
