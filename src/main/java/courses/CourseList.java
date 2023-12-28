@@ -2,6 +2,7 @@ package courses;
 
 import departments.DepartmentList;
 import utility.HttpReader;
+import utility.ObjectLoader;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -13,34 +14,62 @@ import java.util.List;
  * @author JohnN05
  */
 public class CourseList implements Serializable {
+    private static final String OFFLINE_LIST_PATH = "offline_course_list";
     private static final int COURSE_ID_LENGTH = 7;
-    private final List<Course> courses;
+    private List<Course> courses;
 
     public CourseList(){
-        courses = new ArrayList<>();
-        int pageCount = 1;
-        List<RawCourse> pageOfCourses = HttpReader.requestRawCoursePage(pageCount);
-        while(pageOfCourses.size() == HttpReader.PER_PAGE){
-            for(RawCourse r: pageOfCourses){
-                courses.add(CourseFactory.processCourse(r));
+        List<Course> temp = null;
+        try {
+            temp = new ArrayList<>();
+            int pageCount = 1;
+            List<RawCourse> pageOfCourses = HttpReader.requestRawCoursePage(pageCount);
+            while (pageOfCourses.size() == HttpReader.PER_PAGE) {
+                for (RawCourse r : pageOfCourses) {
+                    temp.add(CourseFactory.processCourse(r));
+                }
+
+                pageOfCourses = HttpReader.requestRawCoursePage(++pageCount);
             }
 
-            pageOfCourses = HttpReader.requestRawCoursePage(++pageCount);
+        //Allows offline access for CourseList when internet is unavailable
+        }catch(RuntimeException e){
+            loadCourseListFile(OFFLINE_LIST_PATH);
+        }
+
+        courses = temp;
+        ObjectLoader.save(this, OFFLINE_LIST_PATH);
+    }
+
+    /**
+     * Alternative constructor which allows a CourseList to be loaded in
+     *
+     * @param filePath filePath of serialized CourseList
+     */
+    public CourseList(String filePath){
+        loadCourseListFile(filePath);
+    }
+
+    /**
+     * Loads a CourseList from a file
+     *
+     * @param filePath file path of the CourseList being loaded
+     */
+    private void loadCourseListFile(String filePath){
+        Object temp = ObjectLoader.load(filePath);
+
+        if(temp instanceof CourseList tempList){
+            courses =  tempList.getCourses();
+        }else{
+            throw new ClassCastException("File isn't a CourseList.");
         }
     }
 
     /**
-     * Alternative CourseList constructor
-     *
-     * @param keepVariants Decides whether course variants should be kept in the CourseList (COMM107 & COMM107C)
+     * Removes course variants in the CourseList (i.e. COMM107C)
      */
-    public CourseList(boolean keepVariants){
-        this();
-
-        if(!keepVariants){
-
-            courses.removeIf(course -> course.getCourse_id().length() > 7);
-        }
+    public void removeVariants(){
+        courses.removeIf(course -> course.getCourse_id().length() > 7);
     }
 
     public List<Course> getCourses() {
