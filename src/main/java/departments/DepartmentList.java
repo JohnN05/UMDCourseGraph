@@ -15,17 +15,18 @@ import static utility.ObjectLoader.load;
 
 public class DepartmentList {
     private static final List<Department> allDepartments;
-    private static final String OFFLINE_LIST_PATH = "departments/department_list";
+    private static final String OFFLINE_LIST_PATH = "offline/department_list";
 
     static{
+        List<Department> list;
 
-        List<Department> list = null;
         try {
             list = HttpReader.requestDepartmentSet();
             ObjectLoader.save(list, OFFLINE_LIST_PATH);
 
+        //allows offline access when network is unavailable
         }catch(RuntimeException e){
-           list = (List<Department>) load(OFFLINE_LIST_PATH);
+            list = (List<Department>) load(OFFLINE_LIST_PATH);
         }
         allDepartments = list;
     }
