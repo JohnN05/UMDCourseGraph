@@ -7,6 +7,8 @@ node{
     text-alignment: above;
     size: 5px;
     text-size: 15px;
+    fill-color: red, orange, yellow, green, blue, indigo, purple;
+    fill-mode: dyn-plain;
 }
 edge{
     fill-color: #669BBC;
