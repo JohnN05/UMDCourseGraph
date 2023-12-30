@@ -24,9 +24,10 @@ import java.util.List;
 
 public class CourseWeb {
     private static final String stylesheet = "url('file:src/main/java/web_ui/stylesheet.css')";
-    private static final double DEFAULT_ZOOM = 0.08;
-    private static final int DEFAULT_NODE_LAYOUT_WEIGHT = 200;
+    private static final double DEFAULT_ZOOM = 0.05;
+    private static final int DEFAULT_NODE_LAYOUT_WEIGHT = 250;
     private static final int DEFAULT_EDGE_LAYOUT_WEIGHT = 50;
+    private static final double DEFAULT_STABILIZATION_LIMIT = 0.5;
 
     //important configuration for GraphStream
     static{
@@ -36,10 +37,9 @@ public class CourseWeb {
 
     public CourseWeb(String graphName, CourseList cList){
         Graph graph  = new AdjacencyListGraph(graphName);
-        graph.setStrict(false);
-        graph.setAutoCreate(true);
 
         graph.setAttribute("ui.stylesheet", stylesheet);
+        graph.setAttribute("layout.stabilization-limit", DEFAULT_STABILIZATION_LIMIT);
 
         Viewer viewer = graph.display();
         View view = viewer.getDefaultView();
@@ -53,30 +53,9 @@ public class CourseWeb {
 
         for(Course c: courses){
 
-            //Establishes relationships with other courses
-            for(HashSet<Requisite> prereqs: c.getPrereqs()){
-
-                for(Requisite r: prereqs){
-                    if(r instanceof CourseReq){
-
-                        Course curCourseReq = new Course(r.toString(), null, -1, null, null, null, null);
-
-                        //Adds courses that aren't contained in CourseList
-                        if(!courses.contains(curCourseReq)){
-                            addCourseNode(graph, curCourseReq);
-                        }
-
-                        String edgeId = r + c.getCourse_id();
-                        graph.addEdge(edgeId, r.toString(), c.getCourse_id(), true);
-                        Edge curEdge = graph.getEdge(edgeId);
-
-                        curEdge.setAttribute("layout.weight", DEFAULT_EDGE_LAYOUT_WEIGHT);
-                    }
-                }
-            }
+            addRequisites(graph, c.getCourse_id(), c.getPrereqs(), "prereq", true);
+            addRequisites(graph, c.getCourse_id(), c.getCoreqs(), "coreq", false);
         }
-
-
     }
 
     /**
@@ -100,5 +79,41 @@ public class CourseWeb {
         Department courseDepartment = DepartmentList.matchDepartment(courseId);
         int departmentIndex = departments.indexOf(courseDepartment);
         courseNode.setAttribute("ui.color", (float)departmentIndex/departments.size());
+    }
+
+    /**
+     * Creates edges for the requisites of a class
+     *
+     * @param graph Graph which edges are added
+     * @param courseId Course Id of the current Course
+     * @param reqs  Set of Edge Sets which will be added
+     * @param edgeClass  UI class of added edges
+     * @param directed  Whether the edges are directed
+     */
+    private void addRequisites(Graph graph, String courseId, HashSet<HashSet<Requisite>> reqs, String edgeClass, boolean directed){
+
+        for(HashSet<Requisite> reqOptions: reqs) {
+            for (Requisite r : reqOptions) {
+                if (r instanceof CourseReq) {
+                    Course curCourseReq = new Course(r.toString(), null, -1, null, null, null, null);
+
+                    //Adds courses that aren't contained in CourseList
+                    if (graph.getNode(r.toString()) == null) {
+                        addCourseNode(graph, curCourseReq);
+                    }
+
+                    //Creates the edge for the requisite
+                    String edgeId = curCourseReq.getCourse_id() + courseId;
+
+                    if(graph.getEdge(edgeId) == null) {
+                        graph.addEdge(edgeId, curCourseReq.getCourse_id(), courseId, directed);
+                        Edge curEdge = graph.getEdge(edgeId);
+
+                        curEdge.setAttribute("ui.class", edgeClass);
+                        curEdge.setAttribute("layout.weight", DEFAULT_EDGE_LAYOUT_WEIGHT);
+                    }
+                }
+            }
+        }
     }
 }

@@ -2,14 +2,26 @@
 Stylesheet used in CourseWeb
 */
 
-graph{fill-color: #FDF0D5;}
+graph{}
+
 node{
     text-alignment: above;
-    size: 5px;
-    text-size: 15px;
+    text-style: bold;
+    size: 12px;
+    text-size: 15%;
     fill-color: red, orange, yellow, green, blue, indigo, purple;
     fill-mode: dyn-plain;
 }
+
 edge{
-    fill-color: #669BBC;
-    }
+    shape: freeplane;
+    size: 2px;
+}
+
+edge.prereq{
+    fill-color: lightblue;
+}
+edge.coreq{
+    fill-color: lightpurple;
+    stroke-mode: dots;
+}
