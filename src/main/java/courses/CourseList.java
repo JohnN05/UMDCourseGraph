@@ -24,13 +24,19 @@ public class CourseList implements Serializable {
             temp = new ArrayList<>();
             int pageCount = 1;
             List<RawCourse> pageOfCourses = HttpReader.requestRawCoursePage(pageCount);
-            while (pageOfCourses.size() == HttpReader.PER_PAGE) {
-                for (RawCourse r : pageOfCourses) {
-                    System.out.println("Processing " + r.getCourse_id());
-                    temp.add(CourseFactory.processCourse(r));
-                }
 
-                pageOfCourses = HttpReader.requestRawCoursePage(++pageCount);
+            //checks whether the API is down
+            if(!pageOfCourses.isEmpty()) {
+                while (pageOfCourses.size() == HttpReader.PER_PAGE) {
+                    for (RawCourse r : pageOfCourses) {
+                        System.out.println("Processing " + r.getCourse_id());
+                        temp.add(CourseFactory.processCourse(r));
+                    }
+
+                    pageOfCourses = HttpReader.requestRawCoursePage(++pageCount);
+                }
+            }else{
+                throw new RuntimeException("umd.io is currently down.");
             }
 
         //Allows offline access for CourseList when internet is unavailable
