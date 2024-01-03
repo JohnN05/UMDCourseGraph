@@ -26,6 +26,7 @@ public class CourseList implements Serializable {
             List<RawCourse> pageOfCourses = HttpReader.requestRawCoursePage(pageCount);
             while (pageOfCourses.size() == HttpReader.PER_PAGE) {
                 for (RawCourse r : pageOfCourses) {
+                    System.out.println("Processing " + r.getCourse_id());
                     temp.add(CourseFactory.processCourse(r));
                 }
 
