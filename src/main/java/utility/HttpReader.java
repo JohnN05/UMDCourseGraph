@@ -1,6 +1,7 @@
 package utility;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import courses.RawCourse;
 import departments.Department;
@@ -39,10 +40,15 @@ public class HttpReader {
         return gson.fromJson(getRequest(url), new TypeToken<ArrayList<RawCourse>>(){}.getType());
     }
 
-    public static List<RawCourse> requestRawCoursePage(int pageNum){
+    public static List<RawCourse> requestRawCoursePage(int pageNum) throws IOException {
         String additionalQueries =  "?per_page=" + PER_PAGE + "&page=" + pageNum;
         String url = COURSE_API + additionalQueries;
-        return gson.fromJson(getRequest(url), new TypeToken<ArrayList<RawCourse>>(){}.getType());
+        try {
+            return gson.fromJson(getRequest(url), new TypeToken<ArrayList<RawCourse>>() {
+            }.getType());
+        }catch(JsonSyntaxException e){
+            throw new IOException("Failed to access " + COURSE_API);
+        }
     }
 
     /**
