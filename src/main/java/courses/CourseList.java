@@ -4,6 +4,7 @@ import departments.DepartmentList;
 import utility.HttpReader;
 import utility.ObjectLoader;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,30 +19,21 @@ public class CourseList implements Serializable {
     private static final int COURSE_ID_LENGTH = 7;
     private List<Course> courses;
 
-    public CourseList(){
+    public CourseList() throws IOException {
         List<Course> temp = null;
-        try {
-            temp = new ArrayList<>();
-            int pageCount = 1;
-            List<RawCourse> pageOfCourses = HttpReader.requestRawCoursePage(pageCount);
 
-            //checks whether the API is down
-            if(!pageOfCourses.isEmpty()) {
-                while (pageOfCourses.size() == HttpReader.PER_PAGE) {
-                    for (RawCourse r : pageOfCourses) {
-                        System.out.println("Processing " + r.getCourse_id());
-                        temp.add(CourseFactory.processCourse(r));
-                    }
+        temp = new ArrayList<>();
+        int pageCount = 1;
 
-                    pageOfCourses = HttpReader.requestRawCoursePage(++pageCount);
-                }
-            }else{
-                throw new RuntimeException("umd.io is currently down.");
+        List<RawCourse> pageOfCourses = HttpReader.requestRawCoursePage(pageCount);
+
+        while (pageOfCourses.size() == HttpReader.PER_PAGE) {
+            for (RawCourse r : pageOfCourses) {
+                System.out.println("Processing " + r.getCourse_id());
+                temp.add(CourseFactory.processCourse(r));
             }
 
-        //Allows offline access for CourseList when internet is unavailable
-        }catch(RuntimeException e){
-            loadCourseListFile(OFFLINE_LIST_PATH);
+            pageOfCourses = HttpReader.requestRawCoursePage(++pageCount);
         }
 
         courses = temp;
