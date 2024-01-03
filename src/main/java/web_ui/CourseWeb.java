@@ -24,7 +24,7 @@ import java.util.List;
 
 public class CourseWeb {
     private static final String stylesheet = "url('file:src/main/java/web_ui/stylesheet.css')";
-    private static final double DEFAULT_ZOOM = 0.05;
+    private static final double DEFAULT_ZOOM = 0.03;
     private static final int DEFAULT_NODE_LAYOUT_WEIGHT = 250;
     private static final int DEFAULT_EDGE_LAYOUT_WEIGHT = 50;
     private static final double DEFAULT_STABILIZATION_LIMIT = 0.5;
@@ -41,7 +41,7 @@ public class CourseWeb {
         graph.setAttribute("ui.stylesheet", stylesheet);
         graph.setAttribute("layout.stabilization-limit", DEFAULT_STABILIZATION_LIMIT);
 
-        Viewer viewer = graph.display();
+        final Viewer viewer = graph.display();
         View view = viewer.getDefaultView();
         view.getCamera().setViewPercent(DEFAULT_ZOOM);
 
@@ -93,6 +93,8 @@ public class CourseWeb {
     private void addRequisites(Graph graph, String courseId, HashSet<HashSet<Requisite>> reqs, String edgeClass, boolean directed){
 
         for(HashSet<Requisite> reqOptions: reqs) {
+            int count = 0;
+
             for (Requisite r : reqOptions) {
                 if (r instanceof CourseReq) {
                     Course curCourseReq = new Course(r.toString(), null, -1, null, null, null, null);
@@ -111,6 +113,10 @@ public class CourseWeb {
 
                         curEdge.setAttribute("ui.class", edgeClass);
                         curEdge.setAttribute("layout.weight", DEFAULT_EDGE_LAYOUT_WEIGHT);
+
+                        //Each requisite option has a unique color
+                        curEdge.setAttribute("ui.color", (float)count/ reqOptions.size());
+                        count++;
                     }
                 }
             }

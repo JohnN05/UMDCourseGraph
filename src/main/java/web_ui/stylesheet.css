@@ -2,7 +2,9 @@
 Stylesheet used in CourseWeb
 */
 
-graph{}
+graph{
+    fill-color: ghostwhite;
+}
 
 node{
     text-alignment: above;
@@ -15,13 +17,14 @@ node{
 
 edge{
     shape: freeplane;
-    size: 2px;
+    size: 1px;
 }
 
 edge.prereq{
-    fill-color: lightblue;
+    fill-mode: dyn-plain;
+    fill-color:  rgba(0,0,0, 75), rgba(255, 0, 0, 75), rgba(255,215,0, 75);
 }
 edge.coreq{
-    fill-color: lightpurple;
+    fill-color: lawngreen;
     stroke-mode: dots;
 }
