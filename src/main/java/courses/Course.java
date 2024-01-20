@@ -4,6 +4,7 @@ import courses.relationship.requisites.Requisite;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -76,5 +77,18 @@ public class Course implements Comparable<Course>, Serializable {
     @Override
     public int compareTo(Course o) {
         return this.course_id.compareTo(o.course_id);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Course course = (Course) o;
+        return Objects.equals(course_id, course.course_id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(course_id);
     }
 }
