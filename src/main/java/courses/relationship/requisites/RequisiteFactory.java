@@ -1,8 +1,8 @@
 package courses.relationship.requisites;
 
-import courses.CourseList;
 import departments.Department;
 import departments.DepartmentList;
+import utility.CourseValidator;
 
 /**
  * Factory for all the Requisites
@@ -19,7 +19,7 @@ public class RequisiteFactory {
      * @return a subclass of Requisite with the reqText
      */
     public static Requisite getRequisite(String reqText){
-        if(CourseList.isCourseID(reqText)){
+        if(CourseValidator.isCourseID(reqText)){
             return new CourseReq(reqText);
 
         }

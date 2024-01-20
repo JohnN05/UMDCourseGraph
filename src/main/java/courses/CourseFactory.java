@@ -2,6 +2,7 @@ package courses;
 
 import courses.relationship.requisites.Requisite;
 import courses.relationship.requisites.RequisiteFactory;
+import utility.CourseValidator;
 
 import java.util.*;
 
@@ -241,7 +242,7 @@ public class CourseFactory {
                 }
                 
             //Keeps courses
-            }if(CourseList.isCourseID(curWord)){
+            }if(CourseValidator.isCourseID(curWord)){
                 keepWord = true;
 
             }if(!keepWord){
