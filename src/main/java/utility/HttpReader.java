@@ -30,14 +30,15 @@ public class HttpReader {
     private static final Gson gson = new Gson();
 
     /**
-     * Requests a list of RawCourses from umd.io
+     * Requests a RawCourse from umd.io
      *
-     * @param course_id the course_id of the RawCourses that will be returned.
-     * @return the list of RawCourses
+     * @param course_id the course_id of the RawCourse that will be returned.
+     * @return the RawCourse requested
      */
-    public static List<RawCourse> requestRawCourse(String course_id){
+    public static RawCourse requestRawCourse(String course_id){
         String url = COURSE_API+ "/" + course_id;
-        return gson.fromJson(getRequest(url), new TypeToken<ArrayList<RawCourse>>(){}.getType());
+        List<RawCourse> temp = gson.fromJson(getRequest(url), new TypeToken<ArrayList<RawCourse>>(){}.getType());
+        return temp.get(0);
     }
 
     public static List<RawCourse> requestRawCoursePage(int pageNum) throws IOException {
