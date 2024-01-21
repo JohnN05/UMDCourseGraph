@@ -1,5 +1,5 @@
-import courses.CourseList;
-import web_ui.CourseWeb;
+import courses.graph.CourseGraph;
+import courses.graph.CourseGraphFactory;
 
 import java.io.IOException;
 
@@ -10,7 +10,6 @@ import java.io.IOException;
  */
 public class Client {
     public static void main(String[] args) throws IOException {
-        CourseList courseList = new CourseList();
-        new CourseWeb("main",courseList);
+        CourseGraph courseGraph = CourseGraphFactory.loadCourseGraph("client");
     }
 }
