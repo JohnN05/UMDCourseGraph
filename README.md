@@ -1,8 +1,8 @@
 # UMD Course Graph 
-### A Java Maven project which uses the umd.io API to create a graph representing all of UMD's courses
+### A Java  project which uses the umd.io API to create a graph representing all of UMD's courses
 
 
-This repository was built as the backend of UMD Course Web project.  The backend of this project interprets the data in University of Maryland's course directory (provided by umd.io's API) and processes the data into a directed graph.  The nodes of the UMD Course Graph represent every unique course.  The edges of UMD Course Graph represent different relationships between courses such as requisites of a course.  These course requisites were created by analyzing language patterns in keywords when scraping the course directory.  The end goal of this project is to allow for the data visualization of all courses provided by the University of Maryland.
+This repository was built as the backend of UMD Course Web project.  The nodes of the UMD Course Graph represent unique courses while the edges represent different relationships between courses such as a prerequisite.  The end goal of this project is to allow for the data visualization of all courses provided by the University of Maryland.
 
 ![Diagram1](images/umdcoursegraph-diagram-1.jpg)
 
